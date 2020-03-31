@@ -1,0 +1,140 @@
+class Program
+    {
+        static void Main(string[] args)
+        {
+            #region Заполнение масива окружностей
+            var shapes = new Shape[10];
+
+            for (int i = 0; i < shapes.Length - 1; i++)
+            {
+                Random rnd = new Random();
+                double rnd1 = rnd.Next(0, 20);
+
+                Random random = new Random();
+                double rnd2 = random.NextDouble();
+
+                shapes[i] = new Shape(rnd1 + rnd2);
+            }
+            #endregion
+            #region Поиск средней площади окружностей масива
+            double averSquare = 0;
+            for (int i = 0; i < shapes.Length - 1; i++)
+            {
+                averSquare += shapes[i].Square(shapes[i].R);
+            }
+            averSquare /= shapes.Length;
+            Console.WriteLine(averSquare);
+            #endregion
+            #region Вывод объектов , у которых площадь меньше средней плоади массив
+            for (int i = 0; i < shapes.Length - 1; i++)
+            {
+                if (shapes[i].Square(shapes[i].R) < averSquare)
+                {
+                    Console.WriteLine(shapes[i]);
+                }
+            }
+            #endregion
+
+            #region Заполнение масива конусов
+            var cones = new Cone[10];
+
+            for (int i = 0; i < cones.Length - 1; i++)
+            {
+                Random rnd = new Random();
+                double rnd1 = rnd.Next(0, 20);
+
+                Random random = new Random();
+                double rnd2 = random.NextDouble();
+
+                cones[i] = new Cone(rnd1 + rnd2, (rnd1 + rnd2) * (new Random().NextDouble()));
+            }
+            #endregion
+            #region Поиск конуса с наибольшим объемом
+            Cone maxCone = new Cone(1,1);
+            for (int i = 0; i < cones.Length - 1; i++)
+            {
+                if (maxCone.Volume() < cones[i].Volume())
+                {
+                    maxCone = cones[i];
+                }
+            }
+            Console.WriteLine(new string('*',25));
+            Console.WriteLine(maxCone.ToString());
+            Console.WriteLine(new string('*', 25));
+
+            #endregion
+
+            Console.ReadKey();
+        }
+        static public void Stars()
+        {
+            Console.WriteLine(new string('=', 100));
+        }
+    }
+    class Cone : Shape
+    {
+        private double h;
+        public double H { get => h; set => h = value; }
+
+        public Cone(double R,double H) : base(R)
+        {
+            this.H = H;
+        }
+
+        public double Square(double R,double H)
+        {
+            double S = Math.PI * Math.Pow(R, 2) + Math.PI * R * Math.Sqrt(Math.Pow(R, 2) + Math.Pow(H, 2));
+            //Console.WriteLine("Площадь поверхности конуса = {0}",S);
+            return S;
+        }
+         public double Volume(double R,double H)
+        {
+            double V = (double)((Math.PI * Math.Pow(R, 2) * H)/3);
+            return V;
+        }
+        public double Volume()
+        {
+            double V = (double)((Math.PI * Math.Pow(R, 2) * H) / 3);
+            return V;
+        }
+        public override string ToString()
+        {
+            return string.Format($"Радиус = {R}" +
+                $"\nВысота конуса = {H}" +
+                $"\nПлощадь поверхности конуса = {Square(R)} = Pi*R^2" +
+                $"\nОбъем конуса = {Volume(R,H)}");
+        }
+
+    }
+    Даня❤️, [31.03.20 17:25]
+class Shape
+    {
+        private double r;
+        public double R { get => r; set => r = value; }
+
+        //Конструктор
+        public Shape(double R)
+        {
+            this.R = R;
+        }
+        //Площадь круга
+        public double Square(double R)
+        {
+            double S = Math.PI * Math.Pow(R, 2);
+            //Console.WriteLine("Площадь = {0}",S);
+            return S;
+        } 
+        //Длина круга
+        public double Length(double R)
+        {
+            double C = 2 * Math.PI * R;
+            //Console.WriteLine("Длина круга = {0}",C);
+            return C;
+        }
+        public override string ToString()
+        {
+            return string.Format($"Радиус = {R}" +
+                $"\nПлощадь = {Square(R)} = Pi*R^2" +
+                $"\nДлина круга = {Length(R)} = 2*Pi*R");
+        }
+    }
