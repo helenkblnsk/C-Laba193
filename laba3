@@ -1,0 +1,84 @@
+using System;
+
+namespace ConsoleApp1
+{
+    class Vektor
+    {
+        private double x;
+        private double y;
+        private double z;
+        private double corner_A;
+        private double corner_B;
+        private double corner_C;
+
+        public Vektor(double z, double y, double x)
+        {
+            Z = z;
+            Y = y;
+            X = x;
+            corner_A = Corner(X);
+            corner_B = Corner(Y);
+            corner_C = Corner(Z);
+        }
+
+        public double Corner(double coordinate)//Метод определения направляющих косинусов вектора
+        {
+            return Math.Round(Math.Asin(coordinate / Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2))) * 57,3);
+        }
+        public double Z
+        {
+            get { return z; }
+            set { z = value; }
+        }
+        public double Y
+        {
+            get { return y; }
+            set { y = value; }
+        }
+        public double X
+        {
+            get { return x; }
+            set { x = value; }
+        }
+        public override string ToString()
+        {
+            return string.Format($"|{X,8}|{Y,8}|{Z,8}|{corner_A,8}|{corner_B,8}|{corner_C,8}|");
+        }
+
+        public static Vektor operator +(Vektor vektor1, Vektor vektor2)//Сложение векторов
+        {
+            return new Vektor(vektor1.X + vektor2.X, vektor1.Y + vektor2.Y, vektor1.Z + vektor2.Z);
+        }
+        public static double operator %(Vektor vektor1, Vektor vektor2)//Скалярное определение 
+        {
+            return vektor1.X * vektor2.X + vektor1.Y * vektor2.Y + vektor1.Z * vektor2.Z;
+        }
+        public static Vektor operator*(Vektor vektor1, Vektor vektor2)//Векторное произведение 
+        {
+            return new Vektor(  vektor1.Y*vektor2.Z- vektor1.Z * vektor2.Y,
+                                vektor1.Z * vektor2.X- vektor1.X * vektor2.Z,
+                                vektor1.X * vektor2.Y- vektor1.Y * vektor2.X);
+        }
+    }
+}
+using System;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Vektor vektor1 = new Vektor(5, 4, 3);
+            Vektor vektor2 = new Vektor(1, 2, 3);
+            Vektor vektor3 = new Vektor(6, 7, 8);
+            Console.WriteLine(vektor1);
+            Console.WriteLine(vektor2);
+            Console.WriteLine(vektor3);
+            var result = (vektor1 + vektor2) * vektor2;
+            Console.WriteLine(new string("Векторное произведение - ")+result);
+            var result1 = vektor1 % vektor2;
+            Console.WriteLine(new string("Скалярное произведение - ")+result1);
+        }
+    }
+}
