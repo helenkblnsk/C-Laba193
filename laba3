@@ -1,7 +1,97 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace ConsoleApp1
+namespace Lena1
 {
+    /// <summary>
+    /// Логика взаимодействия для MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+
+        private void buttonAddition_Click(object sender, RoutedEventArgs e)
+        {
+            Vektor vektorFirst = new Vektor(double.Parse(coordinatX_first.Text),
+                double.Parse(coordinatY_first.Text),
+                double.Parse(coordinatZ_first.Text));
+            Vektor vektorSecond = new Vektor(double.Parse(coordinatX_second.Text),
+                double.Parse(coordinatY_second.Text),
+                double.Parse(coordinatZ_second.Text));
+            labelAnswer.Content = (vektorFirst + vektorSecond).ToString();
+        }
+
+        private void buttonScalarProduct_Click(object sender, RoutedEventArgs e)
+        {
+            Vektor vektorFirst = new Vektor(double.Parse(coordinatX_first.Text),
+                            double.Parse(coordinatY_first.Text),
+                            double.Parse(coordinatZ_first.Text));
+            Vektor vektorSecond = new Vektor(double.Parse(coordinatX_second.Text),
+                double.Parse(coordinatY_second.Text),
+                double.Parse(coordinatZ_second.Text));
+            labelAnswer.Content = (vektorFirst * vektorSecond).ToString();
+        }
+
+        private void buttonVectorProduct_Click(object sender, RoutedEventArgs e)
+        {
+            Vektor vektorFirst = new Vektor(double.Parse(coordinatX_first.Text),
+                double.Parse(coordinatY_first.Text),
+                double.Parse(coordinatZ_first.Text));
+            Vektor vektorSecond = new Vektor(double.Parse(coordinatX_second.Text),
+                double.Parse(coordinatY_second.Text),
+                double.Parse(coordinatZ_second.Text));
+            labelAnswer.FontSize = 20;
+            labelAnswer.Content = "Ответ после векторного умножения\n"+(vektorFirst % vektorSecond).ToString();
+        }
+
+        private void exampleOne_Click(object sender, RoutedEventArgs e)
+        {
+            coordinatX_first.Text = "6";
+            coordinatY_first.Text = "5";
+            coordinatZ_first.Text = "4";
+
+            coordinatX_second.Text = "9";
+            coordinatY_second.Text = "8";
+            coordinatZ_second.Text = "7";
+        }
+
+        private void exampleSecond_Click(object sender, RoutedEventArgs e)
+        {
+            coordinatX_first.Text = "6,5";
+            coordinatY_first.Text = "5,5";
+            coordinatZ_first.Text = "4,5";
+
+            coordinatX_second.Text = "9,5";
+            coordinatY_second.Text = "8,5";
+            coordinatZ_second.Text = "7,5";
+        }
+
+        private void exampleThree_Click(object sender, RoutedEventArgs e)
+        {
+            coordinatX_first.Text = "13";
+            coordinatY_first.Text = "5,43";
+            coordinatZ_first.Text = "4,34";
+
+            coordinatX_second.Text = "19,42";
+            coordinatY_second.Text = "8,14";
+            coordinatZ_second.Text = "7,42";
+        }
+    }
     class Vektor
     {
         private double x;
@@ -23,7 +113,7 @@ namespace ConsoleApp1
 
         public double Corner(double coordinate)//Метод определения направляющих косинусов вектора
         {
-            return Math.Round(Math.Asin(coordinate / Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2))) * 57,3);
+            return Math.Round(Math.Asin(coordinate / Math.Sqrt(Math.Pow(X, 2) + Math.Pow(Y, 2) + Math.Pow(Z, 2))) * 57, 3);
         }
         public double Z
         {
@@ -42,7 +132,13 @@ namespace ConsoleApp1
         }
         public override string ToString()
         {
-            return string.Format($"|{X,8}|{Y,8}|{Z,8}|{corner_A,8}|{corner_B,8}|{corner_C,8}|");
+            return string.Format($"Ответ" +
+                $"\n X = {X}" +
+                $"\n Y = {Y}" +
+                $"\n Z = {Z}" +
+                $"\n Corner Alfa = {corner_A}" +
+                $"\n Corner Beta = {corner_B}" +
+                $"\n Corner C(Gamma) = {corner_C}");
         }
 
         public static Vektor operator +(Vektor vektor1, Vektor vektor2)//Сложение векторов
@@ -53,35 +149,17 @@ namespace ConsoleApp1
         {
             return vektor1.X * vektor2.X + vektor1.Y * vektor2.Y + vektor1.Z * vektor2.Z;
         }
-        public static Vektor operator*(Vektor vektor1, Vektor vektor2)//Векторное произведение 
+        public static Vektor operator *(Vektor vektor1, Vektor vektor2)//Векторное произведение 
         {
-            return new Vektor(  vektor1.Y*vektor2.Z- vektor1.Z * vektor2.Y,
-                                vektor1.Z * vektor2.X- vektor1.X * vektor2.Z,
-                                vektor1.X * vektor2.Y- vektor1.Y * vektor2.X);
+            return new Vektor(vektor1.Y * vektor2.Z - vektor1.Z * vektor2.Y,
+                                vektor1.Z * vektor2.X - vektor1.X * vektor2.Z,
+                                vektor1.X * vektor2.Y - vektor1.Y * vektor2.X);
         }
     }
 }
-using System;
 
-namespace ConsoleApp1
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Vektor vektor1 = new Vektor(5, 4, 3);
-            Vektor vektor2 = new Vektor(1, 2, 3);
-            Vektor vektor3 = new Vektor(6, 7, 8);
-            Console.WriteLine(vektor1);
-            Console.WriteLine(vektor2);
-            Console.WriteLine(vektor3);
-            var result = (vektor1 + vektor2) * vektor2;
-            Console.WriteLine(new string("Векторное произведение - ")+result);
-            var result1 = vektor1 % vektor2;
-            Console.WriteLine(new string("Скалярное произведение - ")+result1);
-        }
-    }
-}
+
+
 <Window x:Class="Lena1.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
