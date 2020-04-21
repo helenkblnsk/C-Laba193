@@ -80,3 +80,167 @@ namespace Lena_2
 
     }
 }
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+
+
+namespace Lena_2
+{
+    /// <summary>
+    /// Логика взаимодействия для MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+
+        List<Shape> shapes = new List<Shape>()
+        {
+            new Shape(10),
+            new Shape(11),
+            new Shape(12),
+            new Shape(13),
+            new Shape(13.5),
+            new Shape(15.4)
+        };
+
+        List<Cone> cones = new List<Cone>()
+        {
+            new Cone(16,15),
+            new Cone(26,15.6),
+            new Cone(36,24),
+            new Cone(24,62),
+            new Cone(16.16,16.4)
+        };
+
+        private void buttonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                shapes.Add(new Shape(double.Parse(radiusBox.Text)));
+            }
+            catch(Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
+        }
+
+        private void buttonRandom_Click(object sender, RoutedEventArgs e)
+        {
+            radiusBox.Text = (Math.Round(new Random().Next(0, 20) + new Random().NextDouble())).ToString();
+        }
+
+        private void buttonAverageSquare_Click(object sender, RoutedEventArgs e)
+        {
+            double averageSquare = 0;
+            foreach (var item in shapes)
+            {
+                averageSquare += item.Square1;
+            }
+            averageSquare /= shapes.Count();
+            string result = null;
+            foreach (var item in shapes)
+            {
+                if (item.Square1 < averageSquare)
+                {
+                    result += item.ToString();
+                    result += "\n";
+                    result += new string('=', 40);
+                    result += "\n";
+                }
+            }
+            MessageBox.Show($"Cредняя площадь = {averageSquare}" + "\n" + result);
+
+        }
+
+        private void buttonSqare_Click(object sender, RoutedEventArgs e)
+        {
+            double minSquare;
+            try
+            {
+                minSquare = double.Parse(minRadiusBox.Text);
+                foreach (var item in shapes)
+                {
+                    minSquare += item.Square1;
+                }
+
+                string result = null;
+                foreach (var item in shapes)
+                {
+                    if (item.Square1 < minSquare)
+                    {
+                        result += item.ToString();
+                        result += "\n";
+                        result += new string('=', 40);
+                        result += "\n";
+                    }
+                }
+                MessageBox.Show(result);
+            }
+            catch (Exception excep)
+            {
+                MessageBox.Show(excep.Message);
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            GridShape.ItemsSource = shapes;
+            GridCone.ItemsSource = cones;
+        }
+
+        private void buttonAddCone_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                cones.Add(new Cone(double.Parse(boxConeRadius.Text), double.Parse(boxConeHeigth.Text)));
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
+        }
+
+        private void buttonRandomCone_Click(object sender, RoutedEventArgs e)
+        {
+            boxConeHeigth.Text = Math.Round(new Random().Next(0, 20) + new Random().NextDouble(), 2).ToString();
+            boxConeRadius.Text = Math.Round(new Random().Next(20, 40) + new Random().NextDouble(), 2).ToString();
+        }
+
+        private void buttonMinSquare_Click(object sender, RoutedEventArgs e)
+        {
+            Cone tempCone = new Cone(9999, 9999);
+            for (int i = 0; i < cones.Count; i++)
+            {
+                foreach (var item in cones)
+                {
+                    if (tempCone.Square1 > item.Square1)
+                    {
+                        tempCone = item;
+                    }
+                }
+            }
+            MessageBox.Show($"Наименьший площадь у конуса :\n{tempCone.ToString()}");
+        }
+
+        private void buttonMinVolume_Click(object sender, RoutedEventArgs e)
+        {
+            Cone tempCone = new Cone(9999, 9999);
+            for (int i = 0; i < cones.Count; i++)
+            {
+                foreach (var item in cones)
+                {
+                    if (tempCone.V > item.V)
+                    {
+                        tempCone = item;
+                    }
+                }
+            }
+            MessageBox.Show($"Наименьший объем у конуса :\n{tempCone.ToString()}");
+        }
+    }
+}
