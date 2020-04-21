@@ -72,24 +72,24 @@ namespace Lena1
 
         private void exampleSecond_Click(object sender, RoutedEventArgs e)
         {
-            coordinatX_first.Text = "6,5";
-            coordinatY_first.Text = "5,5";
-            coordinatZ_first.Text = "4,5";
+            coordinatX_first.Text = "6.5";
+            coordinatY_first.Text = "5.5";
+            coordinatZ_first.Text = "4.5";
 
-            coordinatX_second.Text = "9,5";
-            coordinatY_second.Text = "8,5";
-            coordinatZ_second.Text = "7,5";
+            coordinatX_second.Text = "9.5";
+            coordinatY_second.Text = "8.5";
+            coordinatZ_second.Text = "7.5";
         }
 
         private void exampleThree_Click(object sender, RoutedEventArgs e)
         {
             coordinatX_first.Text = "13";
-            coordinatY_first.Text = "5,43";
-            coordinatZ_first.Text = "4,34";
+            coordinatY_first.Text = "5.43";
+            coordinatZ_first.Text = "4.34";
 
-            coordinatX_second.Text = "19,42";
-            coordinatY_second.Text = "8,14";
-            coordinatZ_second.Text = "7,42";
+            coordinatX_second.Text = "19.42";
+            coordinatY_second.Text = "8.14";
+            coordinatZ_second.Text = "7.42";
         }
     }
     class Vektor
