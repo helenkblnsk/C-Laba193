@@ -1,0 +1,215 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Laba_Lena_WF_Threads
+{
+    internal class Shape
+    {
+        private double r;
+        public double R { get => r; set => r = value; }
+        public double Square1 { get => square1; private set => square1 = value; }
+        public double Length1 { get => length1; private set => length1 = value; }
+
+        private double square1;
+        private double length1;
+        public Shape()
+        {
+            R = new Random().Next(100);
+            Square1 = Math.Round(Square(R), 2);
+            Length1 = Math.Round(Length(R), 2);
+        }
+        //Конструктор
+        public Shape(double R)
+        {
+            this.R = R;
+            Square1 = Math.Round(Square(R), 2);
+            Length1 = Math.Round(Length(R), 2);
+        }
+        //Площадь круга
+        public double Square(double R)
+        {
+            double S = Math.PI * Math.Pow(R, 2);
+            //Console.WriteLine("Площадь = {0}",S);
+            return S;
+        }
+        //Длина круга
+        public double Length(double R)
+        {
+            double C = 2 * Math.PI * R;
+            //Console.WriteLine("Длина круга = {0}",C);
+            return C;
+        }
+        public override string ToString()
+        {
+            return $"\nРадиус = {R}\n" +
+                $"\nПлощадь = {Math.Round(Square(R), 2)}\n"+
+                $"\nДлина круга = {Math.Round(Length(R), 2)}\n";
+        }
+        public virtual string BineryToString()
+        {
+            return string.Format(R.ToString());
+        }
+        public virtual bool Save(string fName)
+        {
+            try
+            {
+                FileStream file = new FileStream(fName, FileMode.OpenOrCreate, FileAccess.Write);
+                // Создаем двоичный поток для записи
+                BinaryWriter bw = new BinaryWriter(file, Encoding.UTF8);
+                bw.Write(r);
+                bw.Close();
+                file.Close();
+            }
+            catch (IOException exception)
+            {
+                System.Windows.Forms.MessageBox.Show(exception.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public virtual bool Load(string fName)
+        {
+            try
+            {
+                FileStream file = new FileStream(fName, FileMode.Open, FileAccess.Read);
+                // Создаем двоичный поток для записи
+                BinaryReader binery = new BinaryReader(file, Encoding.UTF8);
+                R = binery.ReadDouble();
+                binery.Close();
+                file.Close();
+            }
+            catch (IOException exception)
+            {
+                System.Windows.Forms.MessageBox.Show(exception.Message);
+                return false;
+            }
+
+            return true;
+        }
+    }
+    
+}
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Laba_Lena_WF_Threads
+{
+    public partial class Form1 : Form
+    {
+        Shape shape;
+        Cone cone;
+
+        public Form1()
+        {
+            InitializeComponent();
+            openFileDialogCone.Filter = "Text files(*.txt)|*.txt|All files(*.*)|*.*";
+            openFileDialogCone.Filter = "Text files(*.txt)|*.txt|All files(*.*)|*.*";
+            saveFileDialogCone.Filter = "Text files(*.txt)|*.txt|All files(*.*)|*.*";
+            saveFileDialogShape.Filter = "Text files(*.txt)|*.txt|All files(*.*)|*.*";
+        }
+
+        private void buttonCalculate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double r, h;
+                Double.TryParse(textBoxShape.Text, out r);
+                if (r == 0 || r < 0)
+                    throw new ArgumentException();
+                shape = new Shape(r);
+                textBoxShapeResult.Text = shape.ToString();
+
+                Double.TryParse(textBoxConeR.Text, out r);
+                Double.TryParse(textBoxConeH.Text, out h);
+                if (r == 0 || r < 0)
+                    throw new ArgumentException();
+                cone = new Cone(r, h);
+                textBoxConeResult.Text = cone.ToString();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message);
+            }
+        }
+
+        private void buttonSaveShape_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialogShape.ShowDialog() == DialogResult.Cancel)
+                return;
+            // сохраняем свойства объекта в файл
+            if (shape.Save(saveFileDialogShape.FileName) == true)
+                MessageBox.Show("File's saved");
+            else
+                MessageBox.Show("Saving is canceled");
+        }
+
+        private void buttonOpenShape_Click(object sender, EventArgs e)
+        {
+            if (openFileDialogShape.ShowDialog() == DialogResult.Cancel)
+                return;
+
+            if (shape == null)
+                shape = new Shape();
+
+            if (shape.Load(openFileDialogShape.FileName) == true)
+            {
+                MessageBox.Show("Data is upload");
+            }
+            else
+            {
+                MessageBox.Show("Uploading is accepted");
+            }
+            textBoxShapeResult.Text = shape.ToString();
+            textBoxShape.Text = shape.R.ToString();
+        }
+
+        private void buttonSaveCone_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialogCone.ShowDialog() == DialogResult.Cancel)
+                return;
+            // получаем выбранный файл
+            string filename = saveFileDialogCone.FileName;
+            // сохраняем текст в файл
+            System.IO.File.WriteAllText(filename, textBoxConeResult.Text);
+            MessageBox.Show("Файл сохранен");
+        }
+
+        private void buttonOpenCone_Click(object sender, EventArgs e)
+        {
+            if (openFileDialogCone.ShowDialog() == DialogResult.Cancel)
+                return;
+            // получаем выбранный файл
+            string filename = openFileDialogCone.FileName;
+            // читаем файл в строку
+            string fileText = System.IO.File.ReadAllText(filename);
+            textBoxConeResult.Text = fileText;
+            MessageBox.Show("File's open");
+
+        }
+
+        private void buttonRandom_Click(object sender, EventArgs e)
+        {
+
+            textBoxShape.Text = (Math.Round(new Random().Next(10) + new Random().NextDouble() + new Random().NextDouble() + new Random().NextDouble(), 2)).ToString();
+            textBoxConeR.Text = (Math.Round(new Random().Next(20) + new Random().NextDouble() + new Random().NextDouble(), 2)).ToString();
+            textBoxConeH.Text = (Math.Round(new Random().Next(30) + new Random().NextDouble(),2)).ToString();
+
+
+        }
+    }
+}
