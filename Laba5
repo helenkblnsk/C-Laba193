@@ -1,0 +1,378 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Laba6_Lena_Delegate_Interface
+{
+    interface ITownBaseMethod
+    {
+        double Square { get; }
+        int Population { get; }
+        void ChangePopulation(int num, char @char);
+        void AddAttraction(params Attraction[] attractions);
+    }
+    interface ITownFilter
+    {
+        bool Attractions(char firstCharacter, out List<Attraction> temp);
+        List<Attraction> Attractions();//In alphabetical order
+        List<Attraction> AttractionsSquareBigger(int square);//Attraction with square thats bigger "square"
+        List<Attraction> AttractionsAge(int age);
+        List<Attraction> AttractionsDateYear(DateTime dateTime);
+    }
+    
+    class Attraction
+    {
+        private readonly string name;
+        private readonly DateTime date;
+        private string author;
+        private double square;
+
+        public Attraction()
+        {
+            name = "None";
+            date = DateTime.Now;
+            author = "None";
+        }
+
+        public Attraction(string name, DateTime date, string author,double square)
+        {
+            this.name = name;
+            this.date = date;
+            this.author = author;
+            this.square = square;
+        }
+
+        public int Age { get { return DateTime.Now.Year - date.Year; } }
+
+        public string Name { get => name;}
+        public double Square { get => square;}
+        public DateTime Date { get => date;}
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return name.GetHashCode() + date.GetHashCode() + author.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return string.Format($"{0,20}|{1,20}|{3,20}|{4,20}",name,date,author,Age);
+        }
+    }
+    
+    class Town : ITownBaseMethod, ITownFilter
+    {
+        private readonly string name;
+        private double square;
+        private int population;
+        private List<Attraction> attractions;
+        private int numAttrations;
+        private readonly DateTime date;
+
+
+        public Town()
+        {
+            name = "None";
+            square = 0;
+            population = 0;
+            attractions = null;
+            numAttrations = 0;
+        }
+
+        public Town(string name)
+        {
+            this.name = name;
+        }
+
+        public Town(string name, double square, int population, DateTime date)
+        {
+            this.name = name;
+            this.square = square;
+            this.population = population;
+            if (attractions != null)
+                numAttrations = attractions.Count;
+            this.date = date;
+        }
+
+        public double Square { get => square; protected set => square = value; }
+        public int Population { get => population; protected set => population = value; }
+        public string Name => name;
+
+        public void AddAttraction(params Attraction[] attraction)
+        {
+            for (int i = 0; i < attraction.Length; i++)
+            {
+                attractions.Add(attraction[i]);
+            }
+        }
+
+        public bool Attractions(char firstCharacter, out List<Attraction> temp)
+        {
+            temp = attractions;
+            foreach (Attraction item in attractions)
+            {
+                if (item.Name[0] == firstCharacter)
+                {
+                    temp.Add(item);
+                }
+            }
+            if (temp.Count == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public List<Attraction> Attractions()
+        {
+            var temp = attractions;
+            temp.Sort();
+            return temp;
+        }
+
+        public void ChangePopulation(int num, char @char)
+        {
+            switch (@char)
+            {
+                case '+':
+                    population += num;
+                    break;
+                case '-':
+                    population -= num;
+                    break;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            Town temp = obj as Town;
+            return temp.Population == this.Population &&
+                    temp.Square == this.Square &&
+                    temp.numAttrations == this.numAttrations;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Population.GetHashCode() + this.Square.GetHashCode() + this.Name.GetHashCode() + this.numAttrations.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("|{0,20}|{1,20}|{2,20}|{3,20}|", name, square, Population, numAttrations);
+        }
+
+        public List<Attraction> AttractionsSquareBigger(int square)
+        {
+            List<Attraction> attractionsTemp = new List<Attraction>();
+            if (attractions == null)
+            {
+                return null;
+            }
+            foreach (Attraction item in this.attractions)
+            {
+                if (item.Square >= square)
+                {
+                    attractionsTemp.Add(item);
+                }
+            }
+            return attractionsTemp;
+        }
+
+        public List<Attraction> AttractionsAge(int age)
+        {
+            List<Attraction> attractionsTemp = new List<Attraction>();
+            if (attractions == null)
+            {
+                return null;
+            }
+            foreach (Attraction item in this.attractions)
+            {
+                if (item.Age == age)
+                {
+                    attractionsTemp.Add(item);
+                }
+            }
+            return attractionsTemp;
+        }
+
+        public List<Attraction> AttractionsDateYear(DateTime dateTime)
+        {
+            List<Attraction> attractionsTemp = new List<Attraction>();
+            if (attractions == null)
+            {
+                return null;
+            }
+            foreach (Attraction item in this.attractions)
+            {
+                if (item.Date.Year == dateTime.Year)
+                {
+                    attractionsTemp.Add(item);
+                }
+            }
+            return attractionsTemp;
+        }
+    }
+    
+    class Megapolice : Town
+    {
+        private int inLandAreasNum;
+        private List<Town> inLandAreas;
+        private string mayor;
+        private const string TelephoneCode = "48(2)";
+        private const string PostINdex = "65000-65480";
+        private const string CarCode = "BH/HH";
+
+        public Megapolice() { }
+
+        public Megapolice(string name):base(name)
+        {
+        }
+
+        public Megapolice(string name, double square, int population, DateTime date,string mayor) : base(name, square, population, date)
+        {
+            this.mayor = mayor;
+        }
+
+        public void AddInLandAreas(params Town[] towns)
+        {
+            for (int i = 0; i < towns.Length; i++)
+            {
+                inLandAreas.Add(towns[i]);
+            }
+            inLandAreasNum = inLandAreas.Count;
+        }
+
+        public void AddInLandAreas(List<Town> towns)
+        {
+            inLandAreas = towns;
+            inLandAreasNum = towns.Count;
+        }
+
+        public override bool Equals(object obj)
+        {
+            Megapolice temp = obj as Megapolice;
+            if (temp==null)
+            {
+                return false;
+            }
+            return base.Equals(temp) && temp.inLandAreasNum == inLandAreasNum
+                && temp.inLandAreas == inLandAreas;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode() + inLandAreas.GetHashCode() + this.inLandAreasNum.GetHashCode() +
+                this.mayor.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + string.Format("{0:20}|{1:20}|",inLandAreasNum,mayor);
+        }
+    }
+    
+    class Region : Megapolice
+    {
+        private List<Town> towns;
+        private Megapolice mainTown;
+
+
+        public Region(string name) : base(name)
+        {
+            towns = new List<Town>();
+            Square = 0;
+            Population = 0;
+        }
+
+        public void AddMainTown(Megapolice megapolice)
+        {
+            if (mainTown == null)
+            {
+                mainTown = megapolice;
+                Square += megapolice.Square;
+                Population += megapolice.Population;
+            }
+        }
+
+        public void AddMainown(string name, double square, int population, DateTime dateTime, string mayor)
+        {
+            if (mainTown == null)
+            {
+                mainTown = new Megapolice(name, square, population, dateTime, mayor);
+                Square += square;
+                Population += population;
+            }
+        }
+
+        public void AddTowns(List<Town> towns)
+        {
+            foreach (var item in towns)
+            {
+                this.towns.Add(item);
+                Population += item.Population;
+                Square += item.Population;
+            }
+
+        }
+
+        public void AddTowns(params Town[] towns)
+        {
+            for (int i = 0; i < towns.Length; i++)
+            {
+                this.towns.Add(towns[i]); 
+                Population += towns[i].Population;
+                Square += towns[i].Population;
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} region|{1} m2|{2} people|{3} towns|Main Town - {4}",this.Name,this.Square,this.Population,this.towns.Count,this.mainTown.Name);
+        }
+
+        public string InfaTown()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (Town town in towns)
+            {
+                stringBuilder.Append(town.ToString()+"\n");
+            }
+            return stringBuilder.ToString();
+        }
+    }
+    
+    public delegate void Infa();
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Town> towns = new List<Town>
+            {
+                new Town("Kotovsk",123.45,500_000,new DateTime(1900,5,12)),
+                new Town("Yuzhnyi",68.34,23464,new DateTime(1970,2,3)),
+                new Town("Reni",235.235,135256,new DateTime(1965,2,5)),
+                new Town("Chernomorks",43.24,63464,new DateTime(1985,1,1)),
+                new Town("Balta",104.42,245,new DateTime(1985,1,1)),
+            };
+            Megapolice megapolice = new Megapolice("Odessa", 162, 1_013_234, new DateTime(1792, 1, 1), "Truhanov");
+            Region region = new Region("Odesskiy");
+            region.AddMainTown(megapolice);
+            region.AddTowns(towns);
+            Infa infa = null;
+            infa += () => { Console.WriteLine(region.ToString()); };
+            infa += () => { Console.WriteLine(new string('=', 100)); };
+            infa += () => 
+            {
+                Console.WriteLine(string.Format("|{0,20}|{1,20}|{2,20}|{3,20}|","Name of town","Square m^2","Population","Count of Attraction")); 
+            };
+            infa += () => { Console.WriteLine(region.InfaTown()); };
+            infa();
+            
+            
+        }
+    }
+}
